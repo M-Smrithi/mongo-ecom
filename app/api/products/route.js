@@ -1,345 +1,90 @@
 import connectDB from "@/lib/db";
 import Product from "@/models/Product";
 
+export const runtime = "nodejs";
+
+const fallbackProducts = [
+  {
+    title: "Blue Shirt",
+    description: "Comfortable cotton blue shirt",
+    price: 999,
+    category: "Clothing",
+    image: "https://picsum.photos/500/300",
+    stock: 20,
+  },
+  {
+    title: "Black T-Shirt",
+    description: "Premium black t-shirt for everyday wear",
+    price: 699,
+    category: "Clothing",
+    image: "https://picsum.photos/500/300",
+    stock: 30,
+  },
+  {
+    title: "Running Shoes",
+    description: "Lightweight running shoes",
+    price: 2499,
+    category: "Footwear",
+    image: "https://picsum.photos/500/300",
+    stock: 12,
+  },
+  {
+    title: "Wireless Headphones",
+    description: "Noise cancelling headphones",
+    price: 4999,
+    category: "Electronics",
+    image: "https://picsum.photos/500/300",
+    stock: 8,
+  },
+  {
+    title: "Laptop Backpack",
+    description: "Water resistant backpack",
+    price: 1599,
+    category: "Bags",
+    image: "https://picsum.photos/500/300",
+    stock: 20,
+  },
+  {
+    title: "Mechanical Keyboard",
+    description: "High performance keyboard",
+    price: 3999,
+    category: "Electronics",
+    image: "https://picsum.photos/500/300",
+    stock: 18,
+  },
+];
+
 export async function GET() {
-  await connectDB();
+  try {
+    await connectDB();
 
-  await Product.deleteMany({});
+    const products = await Product.find({}).sort({ _id: -1 });
 
-  const products = await Product.insertMany([
-   {
-  title: "Blue Shirt",
-  description: "Comfortable cotton blue shirt",
-  price: 999,
-  category: "Clothing",
-  image: "https://picsum.photos/500/300",
-  stock: 20,
-},
-{
-  title: "Black T-Shirt",
-  description: "Premium black t-shirt for everyday wear",
-  price: 699,
-  category: "Clothing",
-  image: "https://picsum.photos/500/300",
-  stock: 30,
-},
-{
-  title: "White Hoodie",
-  description: "Warm and stylish hoodie",
-  price: 1499,
-  category: "Clothing",
-  image: "https://picsum.photos/500/300",
-  stock: 15,
-},
-{
-  title: "Running Shoes",
-  description: "Lightweight running shoes",
-  price: 2499,
-  category: "Footwear",
-  image: "https://picsum.photos/500/300",
-  stock: 12,
-},
-{
-  title: "Casual Sneakers",
-  description: "Comfortable daily wear sneakers",
-  price: 1999,
-  category: "Footwear",
-  image: "https://picsum.photos/500/300",
-  stock: 25,
-},
-{
-  title: "Leather Wallet",
-  description: "Premium genuine leather wallet",
-  price: 899,
-  category: "Accessories",
-  image: "https://picsum.photos/500/300",
-  stock: 40,
-},
-{
-  title: "Smart Watch",
-  description: "Fitness tracking smartwatch",
-  price: 3499,
-  category: "Electronics",
-  image: "https://picsum.photos/500/300",
-  stock: 10,
-},
-{
-  title: "Wireless Headphones",
-  description: "Noise cancelling headphones",
-  price: 4999,
-  category: "Electronics",
-  image: "https://picsum.photos/500/300",
-  stock: 8,
-},
-{
-  title: "Bluetooth Speaker",
-  description: "Portable speaker with deep bass",
-  price: 2999,
-  category: "Electronics",
-  image: "https://picsum.photos/500/300",
-  stock: 14,
-},
-{
-  title: "Gaming Mouse",
-  description: "RGB gaming mouse",
-  price: 1299,
-  category: "Electronics",
-  image: "https://picsum.photos/500/300",
-  stock: 22,
-},
-{
-  title: "Mechanical Keyboard",
-  description: "High performance keyboard",
-  price: 3999,
-  category: "Electronics",
-  image: "https://picsum.photos/500/300",
-  stock: 18,
-},
-{
-  title: "Laptop Backpack",
-  description: "Water resistant backpack",
-  price: 1599,
-  category: "Bags",
-  image: "https://picsum.photos/500/300",
-  stock: 20,
-},
-{
-  title: "Travel Duffel Bag",
-  description: "Large travel duffel",
-  price: 1799,
-  category: "Bags",
-  image: "https://picsum.photos/500/300",
-  stock: 12,
-},
-{
-  title: "Sunglasses",
-  description: "UV protected sunglasses",
-  price: 799,
-  category: "Accessories",
-  image: "https://picsum.photos/500/300",
-  stock: 35,
-},
-{
-  title: "Baseball Cap",
-  description: "Adjustable cotton cap",
-  price: 499,
-  category: "Accessories",
-  image: "https://picsum.photos/500/300",
-  stock: 30,
-},
-{
-  title: "Formal Shirt",
-  description: "Slim fit office shirt",
-  price: 1199,
-  category: "Clothing",
-  image: "https://picsum.photos/500/300",
-  stock: 16,
-},
-{
-  title: "Denim Jeans",
-  description: "Classic blue denim jeans",
-  price: 1399,
-  category: "Clothing",
-  image: "https://picsum.photos/500/300",
-  stock: 18,
-},
-{
-  title: "Track Pants",
-  description: "Comfortable workout pants",
-  price: 899,
-  category: "Clothing",
-  image: "https://picsum.photos/500/300",
-  stock: 24,
-},
-{
-  title: "Yoga Mat",
-  description: "Non-slip yoga mat",
-  price: 999,
-  category: "Sports",
-  image: "https://picsum.photos/500/300",
-  stock: 20,
-},
-{
-  title: "Cricket Bat",
-  description: "Professional cricket bat",
-  price: 2499,
-  category: "Sports",
-  image: "https://picsum.photos/500/300",
-  stock: 7,
-},
-{
-  title: "Football",
-  description: "Match quality football",
-  price: 799,
-  category: "Sports",
-  image: "https://picsum.photos/500/300",
-  stock: 25,
-},
-{
-  title: "Basketball",
-  description: "Indoor outdoor basketball",
-  price: 999,
-  category: "Sports",
-  image: "https://picsum.photos/500/300",
-  stock: 19,
-},
-{
-  title: "Water Bottle",
-  description: "Insulated steel bottle",
-  price: 599,
-  category: "Home",
-  image: "https://picsum.photos/500/300",
-  stock: 45,
-},
-{
-  title: "Coffee Mug",
-  description: "Ceramic coffee mug",
-  price: 399,
-  category: "Home",
-  image: "https://picsum.photos/500/300",
-  stock: 30,
-},
-{
-  title: "Desk Lamp",
-  description: "LED study lamp",
-  price: 1299,
-  category: "Home",
-  image: "https://picsum.photos/500/300",
-  stock: 15,
-},
-{
-  title: "Office Chair",
-  description: "Ergonomic office chair",
-  price: 6999,
-  category: "Furniture",
-  image: "https://picsum.photos/500/300",
-  stock: 5,
-},
-{
-  title: "Study Table",
-  description: "Wooden study table",
-  price: 4999,
-  category: "Furniture",
-  image: "https://picsum.photos/500/300",
-  stock: 6,
-},
-{
-  title: "Monitor Stand",
-  description: "Adjustable monitor stand",
-  price: 999,
-  category: "Furniture",
-  image: "https://picsum.photos/500/300",
-  stock: 13,
-},
-{
-  title: "USB-C Cable",
-  description: "Fast charging cable",
-  price: 299,
-  category: "Electronics",
-  image: "https://picsum.photos/500/300",
-  stock: 60,
-},
-{
-  title: "Power Bank",
-  description: "10000mAh power bank",
-  price: 1499,
-  category: "Electronics",
-  image: "https://picsum.photos/500/300",
-  stock: 20,
-},
-{
-  title: "Phone Case",
-  description: "Shockproof phone cover",
-  price: 399,
-  category: "Electronics",
-  image: "https://picsum.photos/500/300",
-  stock: 40,
-},
-{
-  title: "Tablet Stand",
-  description: "Foldable tablet stand",
-  price: 699,
-  category: "Electronics",
-  image: "https://picsum.photos/500/300",
-  stock: 17,
-},
-{
-  title: "Hair Dryer",
-  description: "Professional hair dryer",
-  price: 1999,
-  category: "Beauty",
-  image: "https://picsum.photos/500/300",
-  stock: 9,
-},
-{
-  title: "Face Wash",
-  description: "Refreshing daily face wash",
-  price: 249,
-  category: "Beauty",
-  image: "https://picsum.photos/500/300",
-  stock: 50,
-},
-{
-  title: "Perfume",
-  description: "Long lasting fragrance",
-  price: 1799,
-  category: "Beauty",
-  image: "https://picsum.photos/500/300",
-  stock: 14,
-},
-{
-  title: "Protein Powder",
-  description: "Whey protein supplement",
-  price: 2999,
-  category: "Health",
-  image: "https://picsum.photos/500/300",
-  stock: 11,
-},
-{
-  title: "Dumbbell Set",
-  description: "Adjustable dumbbells",
-  price: 3999,
-  category: "Health",
-  image: "https://picsum.photos/500/300",
-  stock: 8,
-},
-{
-  title: "Resistance Bands",
-  description: "Workout resistance bands",
-  price: 699,
-  category: "Health",
-  image: "https://picsum.photos/500/300",
-  stock: 27,
-},
-{
-  title: "Cookware Set",
-  description: "Non-stick cookware set",
-  price: 3499,
-  category: "Kitchen",
-  image: "https://picsum.photos/500/300",
-  stock: 10,
-},
-{
-  title: "Knife Set",
-  description: "Professional kitchen knives",
-  price: 1499,
-  category: "Kitchen",
-  image: "https://picsum.photos/500/300",
-  stock: 15,
-},
-{
-  title: "Rice Cooker",
-  description: "Automatic rice cooker",
-  price: 2499,
-  category: "Kitchen",
-  image: "https://picsum.photos/500/300",
-  stock: 9,
-},
-  ]);
+    if (products.length === 0) {
+      const seededProducts = await Product.insertMany(fallbackProducts);
+      return Response.json({
+        success: true,
+        count: seededProducts.length,
+        products: seededProducts,
+      });
+    }
 
-  return Response.json({
-    success: true,
-    count: products.length,
-    products,
-  });
+    return Response.json({
+      success: true,
+      count: products.length,
+      products,
+    });
+  } catch (error) {
+    console.error("Products API error:", error);
+
+    return Response.json(
+      {
+        success: true,
+        count: fallbackProducts.length,
+        products: fallbackProducts,
+        warning: "Using fallback products because the database is unavailable.",
+      },
+      { status: 200 }
+    );
+  }
 }

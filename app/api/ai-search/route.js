@@ -2,18 +2,29 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import connectDB from "@/lib/db";
 import Product from "@/models/Product";
 
-const genAI = new GoogleGenerativeAI(
-  process.env.GEMINIAI_KEY
-);
+const apiKey = process.env.GEMINIAI_KEY || process.env.GEMINI_API_KEY || process.env.GEMINI_AI_KEY;
+const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
+
 export async function GET() {
   return Response.json({
     success: true,
     message: "AI Search API is working",
   });
 }
+
 export async function POST(request) {
   try {
     const { query } = await request.json();
+
+    if (!genAI) {
+      return Response.json(
+        {
+          success: false,
+          message: "Missing Gemini API key. Add GEMINIAI_KEY or GEMINI_API_KEY in Vercel env vars.",
+        },
+        { status: 500 }
+      );
+    }
 
     await connectDB();
 
@@ -28,8 +39,12 @@ export async function POST(request) {
     const keyword = aiRes.response.text().trim();
 
     const products = await Product.find({
-      title: { $regex: keyword, $options: "i" },
-    });
+      $or: [
+        { title: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+        { category: { $regex: keyword, $options: "i" } },
+      ],
+    }).limit(4);
 
     return Response.json({
       keyword,

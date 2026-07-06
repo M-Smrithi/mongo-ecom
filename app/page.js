@@ -97,7 +97,7 @@ export default function Home() {
     ]);
   };
 
-  const handleAskAssistant = (event) => {
+  const handleAskAssistant = async (event) => {
     event.preventDefault();
 
     if (!chatInput.trim()) return;
@@ -113,11 +113,19 @@ export default function Home() {
     setChatInput("");
     setIsThinking(true);
 
-    const recommendations = getRecommendations(prompt, products);
+    try {
+      const response = await fetch("/api/ai-search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: prompt }),
+      });
 
-    window.setTimeout(() => {
+      const data = await response.json();
+      const suggestions = data.products?.length > 0 ? data.products : getRecommendations(prompt, products);
       const responseText =
-        recommendations.length > 0
+        suggestions.length > 0
           ? `I found a few strong matches for “${prompt}”:`
           : `I couldn’t find a close match yet. Try describing the use case, budget, or style.`;
 
@@ -127,11 +135,23 @@ export default function Home() {
           id: Date.now() + 1,
           role: "assistant",
           text: responseText,
-          suggestions: recommendations,
+          suggestions,
         },
       ]);
+    } catch (error) {
+      const fallbackSuggestions = getRecommendations(prompt, products);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "assistant",
+          text: "The AI service is unavailable right now, so I’m showing local matches instead.",
+          suggestions: fallbackSuggestions,
+        },
+      ]);
+    } finally {
       setIsThinking(false);
-    }, 500);
+    }
   };
 
   return (
